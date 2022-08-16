@@ -1,30 +1,3 @@
-
-#################################      S3 BUCKET     #######################
-
-resource "aws_s3_bucket" "bucket" {
-  bucket = "meribuckethai"  
-  tags = {
-    Name        = "My bucket"
-  }
-
-  versioning {
-    enabled = true
-  }
-  
-}
-
-#################################### UPLOAD OBJECT   ###################################
-resource "aws_s3_bucket_acl" "b_acl" {
-  bucket = aws_s3_bucket.bucket.id
-  acl    = "log-delivery-write"
-}
-
-locals {
-  s3_origin_id = "myS3Origin"
-}
-
-
-
 ################################### CLOUDFRONT   #######################################
 
 resource "aws_cloudfront_origin_access_identity" "example" {
@@ -33,7 +6,7 @@ resource "aws_cloudfront_origin_access_identity" "example" {
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.bucket987.bucket_regional_domain_name
     origin_id   = local.s3_origin_id
 
     s3_origin_config {
@@ -96,4 +69,5 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       restriction_type = "none"
     }
   }
+}
 }
