@@ -1,5 +1,3 @@
-######################    LOAD_BALANCER     ############################
-
 resource "aws_lb" "test" {
   name               = "Terraform"
   internal           = false
@@ -14,8 +12,8 @@ resource "aws_lb" "test" {
   }
 }
 ############################### TARGET GROUP   ##############################
-resource "aws_lb_target_group" "tg_terraform" {
-  name     = "terraform-tg"
+resource "aws_lb_target_group" "tg_terraform987" {
+  name     = "terraform-tg1"
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.terraform.id
@@ -29,16 +27,15 @@ resource "aws_lb_listener" "LG" {
   port              = "80"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.tg_terraform.arn
+    target_group_arn = aws_lb_target_group.tg_terraform987.arn
   }
 }
 
-
 ################################## EC2         ###########################
-resource "aws_instance" "myInstance" {
-  ami           = "ami-0ecb2a61303230c9d"
+resource "aws_instance" "myInstance1" {
+  ami           = "ami-090fa75af13c156b4"
   instance_type = "t2.micro"
-  key_name = "assign"
+
   tags                         = {
         "Name" = "instance1"
     }
@@ -51,3 +48,21 @@ resource "aws_instance" "myInstance" {
                   sudo apt update
                 EOF
 }
+
+resource "aws_instance" "myInstance2" {
+  ami           = "ami-090fa75af13c156b4"
+  instance_type = "t2.micro"
+
+  tags                         = {
+        "Name" = "instance2"
+    }
+    user_data = <<-EOF
+                  #!/bin/bash
+                  sudo apt update -y
+                  sudo apt-get install -y apache2
+                  sudo systemctl start apache2
+                  sudo systemctl enable apache2
+                  sudo apt update
+                EOF
+}
+
