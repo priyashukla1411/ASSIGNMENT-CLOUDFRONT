@@ -1,4 +1,3 @@
-#############################                #VPC            ##################################################                                                              
 resource "aws_vpc" "terraform" {
   cidr_block = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -14,7 +13,7 @@ resource "aws_vpc" "terraform" {
 resource "aws_subnet" "subnet-1" {
   vpc_id = aws_vpc.terraform.id           
   cidr_block = "10.0.4.0/24"
-  availability_zone = "ap-northeast-1a"
+  availability_zone = "us-east-1a"
   tags = {
     "Name" = "Tarreform"
   }
@@ -22,7 +21,7 @@ resource "aws_subnet" "subnet-1" {
 resource "aws_subnet" "subnet-2" {
   vpc_id = aws_vpc.terraform.id
   cidr_block = "10.0.5.0/24"
-  availability_zone = "ap-northeast-1c"
+  availability_zone = "us-east-1b"
   tags = {
     "Name" = "Tarreform"
   }
@@ -39,25 +38,17 @@ resource "aws_internet_gateway" "gw" {
 ############################  SECURITY GROUP       #####################################
 resource "aws_security_group" "allow" {
   name        = "allow"
+  description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.terraform.id
 
+
   ingress {
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-  ingress {
+    description      = "TLS from VPC"
     from_port        = 443
     to_port          = 443
     protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
+    cidr_blocks      = [aws_vpc.terraform.cidr_block]
 
-  ingress {
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   egress {
@@ -69,10 +60,9 @@ resource "aws_security_group" "allow" {
   }
 
   tags = {
-    Name = "allow"
+    Name = "allow_tls"
   }
 }
-
 ###################################### ROUTE TABLE    ############################
 
 resource "aws_route_table" "public" {
