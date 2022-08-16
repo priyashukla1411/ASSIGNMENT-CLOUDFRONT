@@ -1,12 +1,16 @@
 
-resource "aws_wafv2_web_acl" "waf" {
-  name        = "managed-rule-waf"
+##################### WAF #########################################
+
+resource "aws_wafv2_web_acl" "WAF" {
+  name        = "WAF_Cloudfront_assign"
   description = "Example of a managed rule."
-  scope       = "REGIONAL"
+  scope       = "CLOUDFRONT"
 
   default_action {
     allow {}
   }
+
+
 
   rule {
     name     = "rule-1"
