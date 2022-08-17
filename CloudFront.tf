@@ -1,4 +1,41 @@
-################################### CLOUDFRONT   #######################################
+################################      S3 BUCKET     #######################
+resource "aws_s3_bucket" "bucket987" {
+  bucket = "meribuckethai987"
+  tags = {
+    Name        = "My bucket"
+  }
+  versioning {
+    enabled = true
+  }
+}
+#################################### UPLOAD OBJECT   ###################################
+resource "aws_s3_bucket_acl" "b_acl" {
+  bucket = aws_s3_bucket.bucket987.id
+  acl    = "log-delivery-write"
+}
+locals {
+  s3_origin_id = "myS3Origin"
+}
+########## POLICY ##############
+resource "aws_s3_bucket_policy" "Attach_policy" {
+  bucket = aws_s3_bucket.bucket987.id
+  policy = data.aws_iam_policy_document.policy.json
+}
+data "aws_iam_policy_document" "policy" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    actions = [
+      "s3:*",
+    ]
+    resources = [
+      "${aws_s3_bucket.bucket987.arn}/*",
+    ]
+  }
+}
+################################## CLOUDFRONT   #######################################
 
 resource "aws_cloudfront_origin_access_identity" "example" {
   comment = "Some comment"
