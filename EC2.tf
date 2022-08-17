@@ -49,20 +49,4 @@ resource "aws_instance" "myInstance1" {
                 EOF
 }
 
-resource "aws_instance" "myInstance2" {
-  ami           = "ami-090fa75af13c156b4"
-  instance_type = "t2.micro"
-
-  tags                         = {
-        "Name" = "instance2"
-    }
-    user_data = <<-EOF
-                  #!/bin/bash
-                  sudo apt update -y
-                  sudo apt-get install -y apache2
-                  sudo systemctl start apache2
-                  sudo systemctl enable apache2
-                  sudo apt update
-                EOF
-}
 
